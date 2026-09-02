@@ -1,0 +1,149 @@
+titleCard:
+  title: "MutualAid-Agent"
+  subtitle: "Autonomous Background Emergency Logistics Agent • 5-Minute Technical Walkthrough"
+  duration: 4000
+app:
+  url: "http://localhost:8765"
+  viewport:
+    width: 1920
+    height: 1080
+  scale: 1
+  zoom: 1
+  colorScheme: "dark"
+tts:
+  provider: "edge"
+  voice: "en-US-JennyNeural"
+  speed: 1
+recording:
+  outputDir: "."
+  fps: 30
+segments:
+  - id: "intro-crisis-problem"
+    narration: "Welcome to MutualAid-Agent, a serverless, autonomous AI coordinator built with the Strands Agents SDK and Amazon Bedrock for the Agents for Humans Hackathon. When severe weather strikes—such as sudden flash floods, winter blizzards, or violent windstorms—municipal emergency services are frequently overwhelmed. In almost every neighborhood, the tools needed to prevent catastrophic damage already exist: submersible pumps, backup generators, chainsaws, and sandbags. But finding them in a panic causes critical delays."
+    intent: "introduce the MutualAid-Agent command center and disaster problem"
+    actions:
+      - type: "wait"
+        duration: 5000
+    timing: "after"
+    audioDuration: 34344
+    videoDuration: 39353
+  - id: "good-neighbor-concept"
+    narration: "Built specifically for the Good Neighbor Agents track, MutualAid-Agent operates on a core philosophy: in a crisis, the best agent is invisible. Community organizers and mutual aid volunteers do not need another complex dashboard to monitor or configure. They need an autonomous background agent that quietly does the heavy data work and surfaces only when a single human decision is required."
+    intent: "highlight Good Neighbor Agents track and autonomous background design"
+    actions:
+      - type: "wait"
+        duration: 5000
+    timing: "after"
+    audioDuration: 23784
+    videoDuration: 28796
+  - id: "architecture-overview"
+    narration: "Under the hood, MutualAid-Agent uses AWS Lambda handlers to ingest real-time storm radar webhooks and community distress pings. The Strands Agents SDK coordinates the agentic reasoning loop with Amazon Bedrock, while Amazon DynamoDB serves as our ultra-low latency community resource and state registry."
+    intent: "explain cloud architecture and Strands Agents SDK integration"
+    actions:
+      - type: "wait"
+        duration: 5000
+    timing: "after"
+    audioDuration: 19944
+    videoDuration: 24950
+  - id: "inspect-inventory"
+    narration: "Let us inspect the live community inventory registered in DynamoDB. Here we see verified neighborhood assets: Neighbor Bob's electric submersible pump, Dave's high-flow gas pump, Sarah's seven-kilowatt generator, Carlos's chainsaw, and pre-filled sandbags at the community center."
+    intent: "overview of DynamoDB community resources"
+    actions:
+      - type: "scroll"
+        target:
+          selector: "#inventory-body"
+      - type: "wait"
+        duration: 4000
+    timing: "after"
+    audioDuration: 17904
+    videoDuration: 22024
+  - id: "trigger-flood-scenario"
+    narration: "Now, let us simulate a live disaster event. A severe Flash Flood Warning webhook arrives from the National Weather Service, reporting rapid basement and driveway inundation at ten Main Street."
+    intent: "trigger flash flood webhook simulation"
+    actions:
+      - type: "click"
+        target:
+          selector: "#btn-flood"
+        done:
+          visible: "#btn-approve"
+      - type: "wait"
+        duration: 3000
+    timing: "after"
+    audioDuration: 12600
+    videoDuration: 16655
+  - id: "agent-reasoning-flow"
+    narration: "Instantly, the Strands Agent springs into action in the background. In under two seconds, Amazon Bedrock parses the unstructured meteorological warning, categorizes the required equipment as a submersible pump, and runs a geospatial Haversine proximity query across DynamoDB. It matches Neighbor Bob's pump, located just point zero three miles away."
+    intent: "observe Strands agent reasoning and proximity calculation in terminal"
+    actions:
+      - type: "scroll"
+        target:
+          selector: "#terminal"
+      - type: "wait"
+        duration: 5000
+    timing: "after"
+    audioDuration: 22680
+    videoDuration: 27745
+  - id: "human-in-the-loop-sms"
+    narration: "Observe the human coordinator's phone simulator on the right. Rather than bombarding the coordinator with raw telemetry or multiple-choice dropdowns, MutualAid-Agent synthesizes the situation into a single-decision SMS prompt: Flood at ten Main Street. Dispatch Neighbor Bob's two-inch pump, point zero three miles away? Reply YES to approve, NO for alternative."
+    intent: "display single-decision SMS to coordinator"
+    actions:
+      - type: "wait"
+        duration: 5000
+    timing: "after"
+    audioDuration: 23808
+    videoDuration: 28821
+  - id: "coordinator-approval"
+    narration: "The coordinator simply replies YES. Watch what happens immediately upon receiving this single binary confirmation."
+    intent: "coordinator approves dispatch by clicking YES"
+    actions:
+      - type: "click"
+        target:
+          selector: "#btn-approve"
+        done:
+          visible: "#dispatch-outcome"
+      - type: "wait"
+        duration: 4000
+    timing: "after"
+    audioDuration: 8016
+    videoDuration: 12749
+  - id: "dispatch-execution-state"
+    narration: "The inbound Twilio webhook triggers the agent to mark the proposal APPROVED and updates Bob's pump status to DISPATCHED in DynamoDB. Simultaneously, the agent automatically texts staging instructions and the destination address directly to Neighbor Bob's phone."
+    intent: "verify DynamoDB state update and owner notification"
+    actions:
+      - type: "wait"
+        duration: 5000
+    timing: "after"
+    audioDuration: 16392
+    videoDuration: 21406
+  - id: "rejection-fallback-demo"
+    narration: "What if Neighbor Bob is unavailable? If the coordinator replies NO, the agent does not fail or drop the incident. It immediately queries DynamoDB for the next closest candidate—Neighbor Dave's three-inch gas pump—and drafts a new single-decision SMS in seconds."
+    intent: "explain rejection fallback and resilience"
+    actions:
+      - type: "wait"
+        duration: 5000
+    timing: "after"
+    audioDuration: 17664
+    videoDuration: 22682
+  - id: "downed-tree-scenario"
+    narration: "MutualAid-Agent adapts across diverse disaster categories. For a severe windstorm with a downed tree blocking the road at five Pine Road, the agent automatically classifies the need for a chainsaw and matches Neighbor Carlos within seconds."
+    intent: "trigger downed tree scenario"
+    actions:
+      - type: "click"
+        target:
+          selector: "#btn-tree"
+        done:
+          visible: "#btn-approve"
+      - type: "wait"
+        duration: 4000
+    timing: "after"
+    audioDuration: 14904
+    videoDuration: 19909
+  - id: "conclusion-summary"
+    narration: "MutualAid-Agent demonstrates how autonomous background AI built with the Strands Agents SDK and Amazon Bedrock can transform community resilience. By handling repetitive emergency logistics in the background and surfacing only for human approvals, we save homes, protect lives, and empower good neighbors everywhere. Thank you."
+    intent: "wrap up and conclude demo video"
+    actions:
+      - type: "wait"
+        duration: 5000
+    timing: "after"
+    audioDuration: 21408
+    videoDuration: 26421

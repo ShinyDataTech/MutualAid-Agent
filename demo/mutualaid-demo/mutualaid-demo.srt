@@ -1,0 +1,243 @@
+1
+00:00:04,161 --> 00:00:06,871
+Welcome to MutualAid-Agent, a serverless
+
+2
+00:00:06,871 --> 00:00:12,154
+autonomous AI coordinator built with the Strands Agents SDK and Amazon Bedrock
+
+3
+00:00:12,154 --> 00:00:14,593
+for the Agents for Humans Hackathon.
+
+4
+00:00:14,593 --> 00:00:19,538
+When severe weather strikes—such as sudden flash floods, winter blizzards
+
+5
+00:00:19,538 --> 00:00:24,822
+or violent windstorms—municipal emergency services are frequently overwhelmed.
+
+6
+00:00:24,822 --> 00:00:26,718
+In almost every neighborhood
+
+7
+00:00:26,718 --> 00:00:32,137
+the tools needed to prevent catastrophic damage already exist: submersible pumps
+
+8
+00:00:32,137 --> 00:00:35,050
+backup generators, chainsaws, and sandbags.
+
+9
+00:00:35,050 --> 00:00:38,505
+But finding them in a panic causes critical delays.
+
+10
+00:00:43,514 --> 00:00:46,797
+Built specifically for the Good Neighbor Agents track
+
+11
+00:00:46,797 --> 00:00:50,389
+MutualAid-Agent operates on a core philosophy: in a crisis
+
+12
+00:00:50,389 --> 00:00:52,123
+the best agent is invisible.
+
+13
+00:00:52,123 --> 00:00:56,707
+Community organizers and mutual aid volunteers do not need another complex
+
+14
+00:00:56,707 --> 00:00:58,813
+dashboard to monitor or configure.
+
+15
+00:00:58,813 --> 00:01:03,644
+They need an autonomous background agent that quietly does the heavy data work
+
+16
+00:01:03,644 --> 00:01:07,298
+and surfaces only when a single human decision is required.
+
+17
+00:01:12,310 --> 00:01:13,253
+Under the hood
+
+18
+00:01:13,253 --> 00:01:18,105
+MutualAid-Agent uses AWS Lambda handlers to ingest real-time storm radar
+
+19
+00:01:18,105 --> 00:01:20,665
+webhooks and community distress pings.
+
+20
+00:01:20,665 --> 00:01:26,123
+The Strands Agents SDK coordinates the agentic reasoning loop with Amazon Bedrock
+
+21
+00:01:26,123 --> 00:01:31,243
+while Amazon DynamoDB serves as our ultra-low latency community resource and
+
+22
+00:01:31,243 --> 00:01:32,254
+state registry.
+
+23
+00:01:37,260 --> 00:01:41,622
+Let us inspect the live community inventory registered in DynamoDB.
+
+24
+00:01:41,622 --> 00:01:46,961
+Here we see verified neighborhood assets: Neighbor Bob's electric submersible pump
+
+25
+00:01:46,961 --> 00:01:52,039
+Dave's high-flow gas pump, Sarah's seven-kilowatt generator, Carlos's chainsaw
+
+26
+00:01:52,039 --> 00:01:55,164
+and pre-filled sandbags at the community center.
+
+27
+00:01:59,284 --> 00:02:02,151
+Now, let us simulate a live disaster event.
+
+28
+00:02:02,151 --> 00:02:07,351
+A severe Flash Flood Warning webhook arrives from the National Weather Service
+
+29
+00:02:07,351 --> 00:02:11,884
+reporting rapid basement and driveway inundation at ten Main Street.
+
+30
+00:02:15,939 --> 00:02:20,395
+Instantly, the Strands Agent springs into action in the background.
+
+31
+00:02:20,395 --> 00:02:21,725
+In under two seconds
+
+32
+00:02:21,725 --> 00:02:25,783
+Amazon Bedrock parses the unstructured meteorological warning
+
+33
+00:02:25,783 --> 00:02:29,507
+categorizes the required equipment as a submersible pump
+
+34
+00:02:29,507 --> 00:02:33,764
+and runs a geospatial Haversine proximity query across DynamoDB.
+
+35
+00:02:33,764 --> 00:02:38,619
+It matches Neighbor Bob's pump, located just point zero three miles away.
+
+36
+00:02:43,684 --> 00:02:47,763
+Observe the human coordinator's phone simulator on the right.
+
+37
+00:02:47,763 --> 00:02:53,515
+Rather than bombarding the coordinator with raw telemetry or multiple-choice dropdowns
+
+38
+00:02:53,515 --> 00:02:58,597
+MutualAid-Agent synthesizes the situation into a single-decision SMS prompt:
+
+39
+00:02:58,597 --> 00:03:00,269
+Flood at ten Main Street.
+
+40
+00:03:00,269 --> 00:03:04,750
+Dispatch Neighbor Bob's two-inch pump, point zero three miles away?
+
+41
+00:03:04,750 --> 00:03:07,492
+Reply YES to approve, NO for alternative.
+
+42
+00:03:12,505 --> 00:03:14,988
+The coordinator simply replies YES.
+
+43
+00:03:14,988 --> 00:03:20,521
+Watch what happens immediately upon receiving this single binary confirmation.
+
+44
+00:03:25,254 --> 00:03:30,312
+The inbound Twilio webhook triggers the agent to mark the proposal APPROVED and
+
+45
+00:03:30,312 --> 00:03:33,642
+updates Bob's pump status to DISPATCHED in DynamoDB.
+
+46
+00:03:33,642 --> 00:03:34,539
+Simultaneously
+
+47
+00:03:34,539 --> 00:03:39,533
+the agent automatically texts staging instructions and the destination address
+
+48
+00:03:39,533 --> 00:03:41,646
+directly to Neighbor Bob's phone.
+
+49
+00:03:46,660 --> 00:03:49,125
+What if Neighbor Bob is unavailable?
+
+50
+00:03:49,125 --> 00:03:54,328
+If the coordinator replies NO, the agent does not fail or drop the incident.
+
+51
+00:03:54,328 --> 00:03:59,668
+It immediately queries DynamoDB for the next closest candidate—Neighbor Dave's
+
+52
+00:03:59,668 --> 00:04:04,324
+three-inch gas pump—and drafts a new single-decision SMS in seconds.
+
+53
+00:04:09,342 --> 00:04:13,005
+MutualAid-Agent adapts across diverse disaster categories.
+
+54
+00:04:13,005 --> 00:04:17,868
+For a severe windstorm with a downed tree blocking the road at five Pine Road
+
+55
+00:04:17,868 --> 00:04:22,857
+the agent automatically classifies the need for a chainsaw and matches Neighbor
+
+56
+00:04:22,857 --> 00:04:24,246
+Carlos within seconds.
+
+57
+00:04:29,251 --> 00:04:34,570
+MutualAid-Agent demonstrates how autonomous background AI built with the Strands
+
+58
+00:04:34,570 --> 00:04:38,891
+Agents SDK and Amazon Bedrock can transform community resilience.
+
+59
+00:04:38,891 --> 00:04:45,473
+By handling repetitive emergency logistics in the background and surfacing only for human approvals
+
+60
+00:04:45,473 --> 00:04:49,994
+we save homes, protect lives, and empower good neighbors everywhere.
+
+61
+00:04:49,994 --> 00:04:50,659
+Thank you.

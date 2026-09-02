@@ -4,6 +4,8 @@ __pycache__/
 .pytest_cache/
 .coverage
 .env
+.gemini/
+.ndemo/
 
 # Hackathon PDFs & internal planning/walkthrough artifacts
 Agents_for_Humans_Hackathon_info.pdf
