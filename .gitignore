@@ -6,6 +6,8 @@ __pycache__/
 .env
 .gemini/
 .ndemo/
+demo/**/audio/
+*.mp4
 
 # Hackathon PDFs & internal planning/walkthrough artifacts
 Agents_for_Humans_Hackathon_info.pdf

@@ -89,11 +89,11 @@ Agents_for_Humans_Hackathon/
 │       ├── __init__.py
 │       ├── weather_webhook.py     # AWS Lambda handler for weather alerts
 │       └── sms_webhook.py         # AWS Lambda handler for incoming Twilio SMS
-├── submission_materials/
-│   ├── project_overview.txt       # Project Name (<60 chars) and Elevator Pitch (<200 chars)
-│   ├── devpost_story.md           # Full Devpost submission story formatted in Markdown
-│   ├── architecture_diagram.md    # Mermaid.js dataflow & cloud architecture diagrams
-│   └── video_script.md            # 5-minute scene-by-scene demo video script
+├── demo/
+│   ├── mutualaid-demo/
+│   │   ├── mutualaid-demo.mp4     # 5-minute narrated demo video
+│   │   ├── mutualaid-demo.srt     # Subtitle captions
+│   │   └── mutualaid-demo.yaml    # ndemo video playbook
 ├── tests/
 │   ├── test_matcher.py            # Geospatial math and ranking tests
 │   ├── test_agent_tools.py        # Strands SDK tool execution tests
@@ -101,6 +101,7 @@ Agents_for_Humans_Hackathon/
 │   ├── test_sms_webhook.py        # Coordinator SMS reply processing tests
 │   └── test_dispatch_flow.py      # End-to-end integration test suite
 ├── run_local_demo.py              # Interactive terminal demonstration script
+├── web_demo_server.py             # Interactive Command Center web server
 ├── serverless.yml                 # Serverless Framework deployment config
 ├── template.yaml                  # AWS SAM & Bedrock AgentCore template
 ├── requirements.txt               # Python package dependencies
@@ -189,16 +190,6 @@ sam deploy --guided
 | `DISPATCHES_TABLE` | DynamoDB Dispatches Table | `MutualAid-Dispatches` |
 | `COORDINATOR_PHONE`| Phone number of primary community coordinator | `+15550199283` |
 | `USE_MOCK_DB` | Set to `true` to use local in-memory DynamoDB engine | `false` |
-
----
-
-## 📄 Submission Materials
-
-All required hackathon submission assets are compiled in the [`submission_materials/`](submission_materials/) directory:
-- [`project_overview.txt`](submission_materials/project_overview.txt): Project Title (<60 chars) and Elevator Pitch (<200 chars).
-- [`devpost_story.md`](submission_materials/devpost_story.md): Full Project Story (Inspiration, What it does, How we built it, Challenges, What's next).
-- [`architecture_diagram.md`](submission_materials/architecture_diagram.md): Mermaid.js sequence and cloud architecture diagrams.
-- [`video_script.md`](submission_materials/video_script.md): 5-minute scene-by-scene video script addressing problem, audience, importance, and demo walkthrough.
 
 ---
 
