@@ -1,0 +1,110 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  MutualAid-Agent - Autonomous Community Emergency Logistics Agent
+  Built for Agents for Humans Hackathon (Good Neighbor Agents Track)
+  Integrated with Strands Agents SDK & Amazon Bedrock AgentCore
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: python3.11
+    Environment:
+      Variables:
+        BEDROCK_MODEL_ID: anthropic.claude-3-5-sonnet-20241022-v2:0
+        RESOURCES_TABLE: !Ref ResourcesTable
+        INCIDENTS_TABLE: !Ref IncidentsTable
+        DISPATCHES_TABLE: !Ref DispatchesTable
+        COORDINATOR_PHONE: '+15550199283'
+        USE_MOCK_DB: 'false'
+
+Resources:
+  # ================= Lambda Handlers =================
+  WeatherWebhookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: mutualaid_agent.handlers.weather_webhook.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ResourcesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref IncidentsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DispatchesTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: "*"
+      Events:
+        WeatherAlertAPI:
+          Type: Api
+          Properties:
+            Path: /webhooks/weather
+            Method: post
+
+  SmsWebhookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: mutualaid_agent.handlers.sms_webhook.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ResourcesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref IncidentsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DispatchesTable
+      Events:
+        TwilioSmsAPI:
+          Type: Api
+          Properties:
+            Path: /webhooks/sms
+            Method: post
+
+  # ================= DynamoDB Tables =================
+  ResourcesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: MutualAid-Resources
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: resource_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: resource_id
+          KeyType: HASH
+
+  IncidentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: MutualAid-Incidents
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: incident_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: incident_id
+          KeyType: HASH
+
+  DispatchesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: MutualAid-Dispatches
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: proposal_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: proposal_id
+          KeyType: HASH
+
+Outputs:
+  WeatherWebhookApiUrl:
+    Description: "API Gateway endpoint URL for incoming Weather Webhooks"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/webhooks/weather"
+  SmsWebhookApiUrl:
+    Description: "API Gateway endpoint URL for incoming Twilio SMS Webhooks"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/webhooks/sms"

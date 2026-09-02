@@ -1,0 +1,95 @@
+service: mutualaid-agent
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'dev'}
+  memorySize: 512
+  timeout: 30
+  environment:
+    BEDROCK_MODEL_ID: anthropic.claude-3-5-sonnet-20241022-v2:0
+    RESOURCES_TABLE: ${self:service}-resources-${self:provider.stage}
+    INCIDENTS_TABLE: ${self:service}-incidents-${self:provider.stage}
+    DISPATCHES_TABLE: ${self:service}-dispatches-${self:provider.stage}
+    COORDINATOR_PHONE: '+15550199283'
+    USE_MOCK_DB: 'false'
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - bedrock:InvokeModel
+            - bedrock:InvokeModelWithResponseStream
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:Scan
+            - dynamodb:Query
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RESOURCES_TABLE}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.INCIDENTS_TABLE}
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DISPATCHES_TABLE}
+
+functions:
+  weatherWebhook:
+    handler: mutualaid_agent.handlers.weather_webhook.lambda_handler
+    description: Ingests severe weather and emergency alerts to trigger autonomous agent reasoning
+    events:
+      - http:
+          path: /webhooks/weather
+          method: post
+          cors: true
+
+  smsWebhook:
+    handler: mutualaid_agent.handlers.sms_webhook.lambda_handler
+    description: Ingests coordinator SMS responses (YES/NO) for human-in-the-loop approvals
+    events:
+      - http:
+          path: /webhooks/sms
+          method: post
+          cors: true
+
+resources:
+  Resources:
+    ResourcesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.RESOURCES_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: resource_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: resource_id
+            KeyType: HASH
+
+    IncidentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.INCIDENTS_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: incident_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: incident_id
+            KeyType: HASH
+
+    DispatchesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DISPATCHES_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: proposal_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: proposal_id
+            KeyType: HASH
